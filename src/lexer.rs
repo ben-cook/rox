@@ -25,14 +25,16 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub fn scan_tokens(&mut self) {
+    pub fn scan_tokens(&mut self) -> Vec<Token> {
         while !self.is_at_end() {
             self.start = self.current;
             self.scan_token();
         }
 
         self.tokens
-            .push(Token::new(TokenType::Eof, "".to_string(), None, self.line))
+            .push(Token::new(TokenType::Eof, "".to_string(), None, self.line));
+
+        self.tokens.clone()
     }
 
     fn is_at_end(&self) -> bool {
@@ -248,7 +250,7 @@ impl<'a> Lexer<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

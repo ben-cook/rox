@@ -2,17 +2,30 @@ use std::fmt;
 
 use crate::token_type::TokenType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Literal {
     String(String),
     Number(f32),
+    Bool(bool),
+    Nil,
 }
 
-#[derive(Debug)]
+impl fmt::Display for Literal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::String(ref string) => write!(f, "{}", string),
+            Self::Number(num) => write!(f, "{}", num),
+            Self::Bool(bool) => write!(f, "{}", bool),
+            Self::Nil => write!(f, "nil"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct Token {
-    token_type: TokenType,
+    pub token_type: TokenType,
     lexeme: String,
-    literal: Option<Literal>,
+    pub literal: Option<Literal>,
     line: usize,
 }
 
@@ -29,6 +42,10 @@ impl Token {
             literal,
             line,
         }
+    }
+
+    pub fn get_lexeme(&self) -> String {
+        self.lexeme.clone()
     }
 }
 

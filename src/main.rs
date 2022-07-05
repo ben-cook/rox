@@ -1,5 +1,5 @@
-use std::fs::read_to_string;
 use std::io;
+use std::{fs::read_to_string, io::Write};
 
 use anyhow::Result;
 use clap::Parser;
@@ -15,18 +15,20 @@ fn main() -> Result<()> {
         }
         None => {
             let stdin = io::stdin();
+            let mut stdout = io::stdout();
+
             'repl: loop {
                 print!("> ");
+                stdout.flush()?;
+
                 let mut input = String::new();
                 match stdin.read_line(&mut input) {
-                    Ok(_) => run(input),
+                    Ok(_) => run(input)?,
                     Err(e) => {
                         println!("Error: {}", e);
                         break 'repl;
                     }
                 }
-                .unwrap()
-                // println!("{}", line.unwrap());
             }
         }
     }
