@@ -1,9 +1,11 @@
 mod expr;
+mod interpreter;
 mod lexer;
 mod parser;
 mod token;
 mod token_type;
 
+use interpreter::Interpreter;
 use lexer::Lexer;
 use parser::Parser;
 
@@ -18,7 +20,7 @@ pub struct Args {
     pub file: Option<PathBuf>,
 }
 
-pub fn run(source: String) -> Result<()> {
+pub fn run(source: &str) -> Result<()> {
     let mut lexer = Lexer::new(&source);
 
     let tokens = lexer.scan_tokens();
@@ -29,7 +31,9 @@ pub fn run(source: String) -> Result<()> {
     match parser.parse() {
         Ok(expression) => {
             // dbg!(&expression);
-            println!("{}", expression)
+            println!("{}", expression);
+            let mut interpreter = Interpreter::new();
+            interpreter.interpret(&expression)?;
         }
         Err(_) => println!(),
     }

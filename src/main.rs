@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self, BufRead};
 use std::{fs::read_to_string, io::Write};
 
 use anyhow::Result;
@@ -11,22 +11,29 @@ fn main() -> Result<()> {
     match args.file {
         Some(file_path) => {
             let file_contents = read_to_string(file_path)?;
-            run(file_contents)?;
+            run(&file_contents)?;
         }
         None => {
-            let stdin = io::stdin();
+            let mut input = String::new();
+            let mut stdin = io::stdin().lock();
             let mut stdout = io::stdout();
 
-            'repl: loop {
+            loop {
                 print!("> ");
                 stdout.flush()?;
 
-                let mut input = String::new();
+                input.clear();
                 match stdin.read_line(&mut input) {
-                    Ok(_) => run(input)?,
+                    Ok(bytes_read) => {
+                        if bytes_read == 0 {
+                            std::process::exit(0);
+                        } else {
+                            run(&input)?
+                        }
+                    }
                     Err(e) => {
                         println!("Error: {}", e);
-                        break 'repl;
+                        std::process::exit(70);
                     }
                 }
             }
