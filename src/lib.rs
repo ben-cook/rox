@@ -4,6 +4,7 @@ mod lexer;
 mod parser;
 mod token;
 mod token_type;
+mod stmt;
 
 use interpreter::Interpreter;
 use lexer::Lexer;

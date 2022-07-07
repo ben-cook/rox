@@ -1,4 +1,5 @@
 use crate::expr::Expr;
+use crate::stmt::Stmt;
 use crate::token::{Literal, Token};
 use crate::token_type::TokenType;
 
@@ -15,12 +16,39 @@ impl Parser {
         Self { tokens, current: 0 }
     }
 
-    pub fn parse(&mut self) -> Result<Box<Expr>> {
-        self.expression()
+    pub fn parse(&mut self) -> Result<Vec<Stmt>> {
+        let mut statements = Vec::new();
+        while !self.is_at_end() {
+            statements.push(self.statement());
+        }
+
+        Ok(statements)
     }
 
-    fn expression(&mut self) -> Result<Box<Expr>> {
-        self.equality()
+    fn statement(&self) -> Result<Stmt> {
+        if self.matches(TokenType::Print) {
+            return self.print_statement();
+        };
+
+        self.expression_statement()
+    }
+
+    fn print_statement(&self) -> Result<Stmt> {
+        let value = self.expression()?;
+        self.consume(TokenType::Semicolon)
+            .context("Expect ';' after value.")?;
+        Ok(Stmt::Print { expression: value })
+    }
+
+    fn expression_statement(&self) -> Result<Stmt> {
+        let expr = self.expression()?;
+        self.consume(TokenType::Semicolon)
+            .context("Expect ';' after value.")?;
+        Ok(Stmt::Expression(expr))
+    }
+
+    fn expression(&mut self) -> Result<Expr> {
+        self.equality().map(|x| *x)
     }
 
     fn equality(&mut self) -> Result<Box<Expr>> {
