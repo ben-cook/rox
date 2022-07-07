@@ -1,10 +1,6 @@
 use crate::expr::Expr;
 
-pub enum  
-    
- Stmt {
+pub enum Stmt {
     Expression(Expr),
-    Print {
-        expression: Expr,
-    }
+    Print { expression: Expr },
 }

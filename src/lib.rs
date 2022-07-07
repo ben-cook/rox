@@ -2,9 +2,9 @@ mod expr;
 mod interpreter;
 mod lexer;
 mod parser;
+mod stmt;
 mod token;
 mod token_type;
-mod stmt;
 
 use interpreter::Interpreter;
 use lexer::Lexer;
@@ -32,9 +32,9 @@ pub fn run(source: &str) -> Result<()> {
     match parser.parse() {
         Ok(expression) => {
             // dbg!(&expression);
-            println!("{}", expression);
-            let mut interpreter = Interpreter::new();
-            interpreter.interpret(&expression)?;
+            // println!("{}", expression);
+            // let mut interpreter = Interpreter::new();
+            // interpreter.interpret(&expression)?;
         }
         Err(_) => println!(),
     }

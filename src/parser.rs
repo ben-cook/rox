@@ -19,7 +19,7 @@ impl Parser {
     pub fn parse(&mut self) -> Result<Vec<Stmt>> {
         let mut statements = Vec::new();
         while !self.is_at_end() {
-            statements.push(self.statement());
+            statements.push(self.statement()?);
         }
 
         Ok(statements)
@@ -47,8 +47,8 @@ impl Parser {
         Ok(Stmt::Expression(expr))
     }
 
-    fn expression(&mut self) -> Result<Expr> {
-        self.equality().map(|x| *x)
+    fn expression(&mut self) -> Result<Box<Expr>> {
+        self.equality()
     }
 
     fn equality(&mut self) -> Result<Box<Expr>> {
